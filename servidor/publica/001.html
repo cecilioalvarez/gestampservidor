@@ -1,0 +1,85 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+        function mifuncion() {
+
+            console.log("estoy vivo");
+        }
+        $(document).ready(function () {
+
+            $("#botonajax").click(function () {
+
+                //problema de la piramide de DOM
+                let promesa1 = $.get("personas").promise();
+                let promesa2 = $.get("personas2").promise();
+
+                /*
+                promesa1.then(function(datos1) {
+
+                    dibujaTabla(datos1);
+                })
+                promesa2.then(function(datos2) {
+
+                    dibujaTabla(datos2)
+                });
+                */
+
+                $.when(promesa1, promesa2).done(function (datos1, datos2) {
+
+                    let lista = [...datos1[0], ...datos2[0]];
+                    console.log(lista.map((p) => p.edad).reduce((a, e) => a + e));
+
+                }).fail(function () {
+                    alert("$.get failed!");
+                });
+
+
+
+            });
+
+            function dibujaTabla(personas) {
+
+                personas.map(function (persona) {
+
+                    return `<tr>
+                    <td>${persona.nombre}</td>
+                     <td>${persona.apellidos}<td>
+                     <td>${persona.edad}</td></tr>`;
+                }).forEach(function (fila) {
+                    $(fila).appendTo("#mitabla");
+                })
+            }
+
+            $("#botonnormal").click(function () {
+                alert("hola");
+            })
+
+
+
+            $("#otro").click(function () {
+
+                setTimeout(mifuncion, 5000);
+            })
+
+            //monitor(mifuncion);
+
+        })
+    </script>
+
+</head>
+
+<body>
+
+    <table id="mitabla">
+
+    </table>
+    <input type="button" value="ajax" id="botonajax" />
+    <input type="button" value="normal" id="botonnormal" />
+    <input type="button" value="otro" id="otro" />
+</body>
+
+</html>
